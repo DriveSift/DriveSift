@@ -1,0 +1,15 @@
+# PowerShell 产物
+*.log
+*.psd1.bak
+*.psm1.bak
+
+# 测试临时文件
+tests/pester-failures.txt
+
+# 生成的报告（Invoke-DsAudit 输出）
+DriveSift-report.html
+
+# 操作系统
+Thumbs.db
+desktop.ini
+.DS_Store
