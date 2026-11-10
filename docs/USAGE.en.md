@@ -155,12 +155,12 @@ Read-only commands: `Invoke-DsAudit`, `Get-DsInventory`, `Get-DsOwnership`,
 ```powershell
 # One-shot full audit (read-only): ownership + inventory + candidates
 # + duplicates + health + suggestions + HTML report
-Invoke-DsAudit -ProjectRoot D:\XM -DuplicatePath D:\XM -OutFile .\report.html -Open
+Invoke-DsAudit -ProjectRoot C:\Projects -DuplicatePath C:\Projects -OutFile .\report.html -Open
 
 # Step by step
-$own = Get-DsOwnership -ProjectRoot D:\XM
+$own = Get-DsOwnership -ProjectRoot C:\Projects
 Get-DsInventory -Path "$env:LOCALAPPDATA\npm-cache"
-Find-DsDuplicate -Path D:\XM -MinSize 10MB
+Find-DsDuplicate -Path C:\Projects -MinSize 10MB
 ```
 
 ### Candidates and tiers

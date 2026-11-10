@@ -5,7 +5,7 @@
     .DESCRIPTION
         只读。不会移动或删除任何文件，产出是一份可归档的 HTML 报告。
     .EXAMPLE
-        Invoke-DsAudit -ProjectRoot D:\XM -DuplicatePath D:\XM -OutFile .\report.html -Open
+        Invoke-DsAudit -ProjectRoot C:\Projects -DuplicatePath C:\Projects -OutFile .\report.html -Open
     #>
     [CmdletBinding()]
     param(

@@ -136,12 +136,12 @@ Register-DsAutoPurge -QuarantineRoot D:\_quarantine -DailyAt 04:15
 
 ```powershell
 # 一键完整审计（只读）：归属 + 清点 + 候选 + 重复 + 体检 + 建议 + HTML 报告
-Invoke-DsAudit -ProjectRoot D:\XM -DuplicatePath D:\XM -OutFile .\report.html -Open
+Invoke-DsAudit -ProjectRoot C:\Projects -DuplicatePath C:\Projects -OutFile .\report.html -Open
 
 # 分步
-$own = Get-DsOwnership -ProjectRoot D:\XM        # 项目索引与运行时索引
+$own = Get-DsOwnership -ProjectRoot C:\Projects        # 项目索引与运行时索引
 Get-DsInventory -Path "$env:LOCALAPPDATA\npm-cache"   # 单目录真实占用
-Find-DsDuplicate -Path D:\XM -MinSize 10MB            # 内容哈希找重复
+Find-DsDuplicate -Path C:\Projects -MinSize 10MB            # 内容哈希找重复
 ```
 
 ### 候选与级别

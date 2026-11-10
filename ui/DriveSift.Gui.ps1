@@ -9,7 +9,7 @@
     界面本身不做任何推断，所有结论都来自模块（归属索引 + 规则集 + 守卫 + 内容抽查）。
     审计在后台运行，界面不会假死；破坏性操作一律走确认对话框并写入 audit.jsonl 留痕。
 .EXAMPLE
-    .\ui\DriveSift.Gui.ps1 -ProjectRoot D:\XM
+    .\ui\DriveSift.Gui.ps1 -ProjectRoot C:\Projects
 .EXAMPLE
     .\ui\DriveSift.Gui.ps1 -ValidateOnly
 #>

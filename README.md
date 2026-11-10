@@ -46,13 +46,13 @@ English documentation: [README.en.md](README.en.md) · [User Guide 用户手册]
 
 ```powershell
 # 只读审计：归属 + 清点 + 候选（含内容检查）+ 重复 + 报告
-Invoke-DsAudit -ProjectRoot D:\XM -DuplicatePath D:\XM -OutFile .\report.html -Open
+Invoke-DsAudit -ProjectRoot C:\Projects -DuplicatePath C:\Projects -OutFile .\report.html -Open
 
 # 分步执行
-$own = Get-DsOwnership -ProjectRoot D:\XM
+$own = Get-DsOwnership -ProjectRoot C:\Projects
 Get-DsInventory -Path "$env:LOCALAPPDATA\npm-cache"
 Get-DsCandidate -Ownership $own -Tier P2    # 混入个人文件的候选会自动降为 P1 并给出内容理由
-Find-DsDuplicate -Path D:\XM -MinSize 10MB
+Find-DsDuplicate -Path C:\Projects -MinSize 10MB
 
 # 清理：先隔离（同盘改名，瞬间完成，默认 7 天保留期）
 Get-DsCandidate -Ownership $own -Tier P2 |
@@ -82,7 +82,7 @@ Register-DsAutoPurge -QuarantineRoot D:\_quarantine -Unregister
 不想记命令就双击 `Start-Gui.cmd`，或者：
 
 ```powershell
-.\DriveSift\ui\DriveSift.Gui.ps1 -ProjectRoot D:\XM
+.\DriveSift\ui\DriveSift.Gui.ps1 -ProjectRoot C:\Projects
 ```
 
 > 注意：`DriveSift.psd1` 是模块清单（数据文件），双击它不会启动软件——

@@ -57,13 +57,13 @@ To auto-load each session, add the repo path to `$env:PSModulePath`.
 ```powershell
 # Read-only audit: ownership + inventory + candidates (with content check)
 # + duplicates + report
-Invoke-DsAudit -ProjectRoot D:\XM -DuplicatePath D:\XM -OutFile .\report.html -Open
+Invoke-DsAudit -ProjectRoot C:\Projects -DuplicatePath C:\Projects -OutFile .\report.html -Open
 
 # Step by step
-$own = Get-DsOwnership -ProjectRoot D:\XM
+$own = Get-DsOwnership -ProjectRoot C:\Projects
 Get-DsInventory -Path "$env:LOCALAPPDATA\npm-cache"
 Get-DsCandidate -Ownership $own -Tier P2   # candidates with personal files auto-drop to P1
-Find-DsDuplicate -Path D:\XM -MinSize 10MB
+Find-DsDuplicate -Path C:\Projects -MinSize 10MB
 
 # Clean: quarantine first (same-disk rename, instant, 7-day retention)
 Get-DsCandidate -Ownership $own -Tier P2 |
@@ -94,7 +94,7 @@ Register-DsAutoPurge -QuarantineRoot D:\_quarantine -Unregister
 Double-click `Start-Gui.cmd`, or:
 
 ```powershell
-.\DriveSift\ui\DriveSift.Gui.ps1 -ProjectRoot D:\XM
+.\DriveSift\ui\DriveSift.Gui.ps1 -ProjectRoot C:\Projects
 ```
 
 > Note: `DriveSift.psd1` is a module manifest (a data file) — double-clicking
