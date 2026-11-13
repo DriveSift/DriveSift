@@ -5,14 +5,21 @@ function Get-DsSubDirectory {
     param(
         [Parameter(Mandatory)]
         [string]$Root,
-        [int]$MaxDepth = 4
+        [int]$MaxDepth = 4,
+        [int]$MaxDirs = 20000
     )
 
     # 跳过产物与依赖目录，否则一次索引会把整个 node_modules 走一遍
     $skipNames = @(
         'node_modules', '.git', '.svn', '.hg', 'dist', 'build', 'out', 'target',
         'vendor', '.venv', 'venv', '__pycache__', '.next', '.nuxt', '.gradle',
-        'obj', 'coverage', '.cache', '.turbo', '.idea', '.vs'
+        'obj', 'coverage', '.cache', '.turbo', '.idea', '.vs',
+        # 扫描盘符根（如 C:\）时，这些系统巨树不可能是项目（均为 P0 保护组件），
+        # 不跳过的话仅 WinSxS 一棵就是几万目录，索引会假死数分钟
+        'windows', 'program files', 'program files (x86)', 'programdata',
+        'perflogs', 'recovery', 'system volume information',
+        # 用户侧巨树：项目几乎不会放在这些目录里，缓存与工具链由规则路径与工具链索引另行处理
+        'appdata', '.rustup', '.cargo', '.nuget', '.ollama'
     )
 
     $list = New-Object System.Collections.ArrayList
@@ -20,6 +27,9 @@ function Get-DsSubDirectory {
     $stack.Push(@($Root, 0))
 
     while ($stack.Count -gt 0) {
+        # 目录数上限：索引是"归属"的近似，超大根目录宁可少列也不能让界面假死
+        if ($list.Count -ge $MaxDirs) { break }
+
         $entry = $stack.Pop()
         $dir = [string]$entry[0]
         $depth = [int]$entry[1]
@@ -32,6 +42,8 @@ function Get-DsSubDirectory {
                 try {
                     $name = (Split-Path -Leaf $child).ToLowerInvariant()
                     if ($skipNames -contains $name) { continue }
+                    # $Recycle.Bin、$WinREAgent 等系统目录
+                    if ($name.StartsWith('$')) { continue }
                     $attr = [System.IO.File]::GetAttributes($child)
                     if (($attr -band [System.IO.FileAttributes]::ReparsePoint) -ne 0) { continue }
                     $stack.Push(@($child, $depth + 1))
@@ -78,11 +90,21 @@ function Get-DsProjectIndex {
             $kinds = @()
             $found = @()
 
-            foreach ($marker in $markers) {
-                $candidate = Join-Path $full $marker.Name
-                if (Test-Path -Path $candidate) {
-                    $kinds += $marker.Kind
-                    $found += $marker.Name
+            # 一次枚举目录内文件再按名匹配标记；逐个 Test-Path 在几万目录下太慢
+            $fileNames = $null
+            try { $fileNames = [System.IO.Directory]::GetFiles($full) } catch { }
+            if ($null -ne $fileNames) {
+                foreach ($marker in $markers) {
+                    if ($marker.Name.Contains('*')) {
+                        $hit = @($fileNames | Where-Object { (Split-Path -Leaf $_) -like $marker.Name }).Count -gt 0
+                    }
+                    else {
+                        $hit = $fileNames -contains (Join-Path $full $marker.Name)
+                    }
+                    if ($hit) {
+                        $kinds += $marker.Kind
+                        $found += $marker.Name
+                    }
                 }
             }
 
